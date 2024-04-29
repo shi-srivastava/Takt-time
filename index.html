@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alarm Clock - Input</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #FCB026;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #setAlarmText {
+            font-size: 5rem;
+            font-weight: bold;
+            white-space: pre-line;
+            /* Ensures line breaks are respected */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="setAlarmText">
+        Set Takt Time <bR>
+    </div>
+    <label for="startTime" style="font-size: 3rem;">Shift start time:</label>
+    <input type="time" id="startTime" value="06:30" style="font-size: 3rem;"><br><br>
+    <label for="interval" style="font-size: 3rem;">Takt Time (in minutes):</label>
+    <input type="number" id="interval" min="1" value="150" style="font-size: 3rem; width:30vh"><br><br>
+    <button onclick="setAlarm()" style="font-size: 1.5rem; cursor:pointer; box-sizing: border-box; color: #222222;">Start</button>
+
+    <script>
+        function setAlarm() {
+            const startTimeInput = document.getElementById('startTime').value;
+            const intervalInput = parseInt(document.getElementById('interval').value);
+
+            if (!startTimeInput || isNaN(intervalInput)) {
+                alert('Please enter valid starting time and interval.');
+                return;
+            }
+
+            const params = new URLSearchParams({
+                startTime: startTimeInput,
+                interval: intervalInput
+            });
+
+            window.location.href = `time.html?${params}`;
+        }
+    </script>
+</body>
+
+</html>

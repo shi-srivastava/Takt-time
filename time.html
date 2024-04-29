@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current Time</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #FCB026;
+        }
+
+        #currentTime {
+            font-family:"digital-7";
+			src: url("digital-7.ttf") format("truetype");
+            font-size: 7rem;
+            color: red;
+        }
+
+        #intervalsPassed {
+            font-size: 3rem;
+            color: #000000;
+            margin-top: 10px;
+        }
+
+        #timeLeft {
+            font-size: 2rem;
+            color: #1c1c1c;
+            margin-top: 10px;
+        }
+
+        #alarmSound {
+            display: none;
+        }
+
+        #backButton {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <audio id="alarmSound" src="al1.wav" preload="auto"></audio>
+    <div id="currentTime"></div>
+    <div id="intervalsPassed"></div>
+    <div id="timeLeft"></div>
+    <button id="backButton" onclick="goBack()">Set Takt Time</button>
+
+    <script>
+        // Function to get URL parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        };
+
+        // Display current time and update interval dynamically
+        setInterval(function () {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            document.getElementById('currentTime').innerText = `${hours}:${minutes}:${seconds}`;
+
+            // Calculate number of intervals passed and time left until the next interval
+            const startTimeParam = getUrlParameter('startTime');
+            const interval = getUrlParameter('interval');
+            if (startTimeParam && interval) {
+                // Parse start time string into hours and minutes
+                const [startHours, startMinutes] = startTimeParam.split(':').map(Number);
+
+                // Calculate time difference between start time and current time
+                const currentHours = now.getHours();
+                const currentMinutes = now.getMinutes();
+                const currentSeconds = now.getSeconds();
+                const differenceInMinutes = (currentHours - startHours) * 60 + (currentMinutes - startMinutes);
+
+                const intervalsPassed = Math.floor(differenceInMinutes / interval);
+                document.getElementById('intervalsPassed').innerText = `Roll: ${intervalsPassed}`;
+
+                const minutesLeft = interval - (differenceInMinutes % interval) - 1;
+                const secondsLeft = 60 - currentSeconds;
+                document.getElementById('timeLeft').innerText = `Next Roll: ${minutesLeft} minutes`;
+
+                // Check if the interval is complete and play the alarm sound
+                if (minutesLeft === 0 && secondsLeft === 0) {
+                    const alarmSound = document.getElementById('alarmSound');
+                    alarmSound.play();
+                }
+            }
+        }, 1000);
+
+        // Function to go back to the first page
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+
+</html>
